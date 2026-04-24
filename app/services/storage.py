@@ -6,13 +6,21 @@ from app.models import Recipe, RecipeCreate, RecipeUpdate
 
 
 def _normalize_imported_recipe_dict(raw: Dict[str, Any]) -> Dict[str, Any]:
-    """Accept legacy exports that used `instructions` and omitted `cuisine`."""
+    """Normalize import payloads: list `instructions`, legacy string, or old `steps` key."""
     data = dict(raw)
-    if "steps" not in data and "instructions" in data:
-        text = str(data.pop("instructions", "")).strip()
-        if text:
-            chunks = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
-            data["steps"] = chunks if chunks else [text]
+    if "instructions" not in data and "steps" in data:
+        data["instructions"] = data.pop("steps")
+    if "instructions" in data:
+        inst = data["instructions"]
+        if isinstance(inst, str):
+            text = inst.strip()
+            if text:
+                chunks = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+                data["instructions"] = chunks if chunks else [text]
+            else:
+                data["instructions"] = []
+        elif isinstance(inst, list):
+            data["instructions"] = [str(x).strip() for x in inst if str(x).strip()]
     if "cuisine" not in data or not str(data.get("cuisine", "")).strip():
         data["cuisine"] = "Unspecified"
     return data

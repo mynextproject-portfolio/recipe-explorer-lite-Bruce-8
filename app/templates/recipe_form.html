@@ -91,9 +91,9 @@
             
             <!-- Instructions: one numbered step per line -->
             <div class="mb-4">
-                <label for="steps" class="form-label">Instruction steps</label>
-                <textarea class="form-control" id="steps" name="steps" rows="10" required
-                          placeholder="One step per line. Example:&#10;Preheat the oven to 375°F.&#10;Mix dry ingredients in a bowl.">{% if recipe %}{{ recipe.steps|join('\n') }}{% endif %}</textarea>
+                <label for="instructions" class="form-label">Instruction steps</label>
+                <textarea class="form-control" id="instructions" name="instructions" rows="10" required
+                          placeholder="One step per line. Example:&#10;Preheat the oven to 375°F.&#10;Mix dry ingredients in a bowl.">{% if recipe %}{{ recipe.instructions|join('\n') }}{% endif %}</textarea>
                 <div class="form-text">Each non-empty line becomes one numbered step on the recipe page.</div>
             </div>
             

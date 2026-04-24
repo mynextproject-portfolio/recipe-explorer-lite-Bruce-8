@@ -25,14 +25,14 @@ class _RecipeBody(BaseModel):
     title: str
     description: str
     ingredients: List[str] = Field(..., min_length=1, max_length=MAX_INGREDIENTS)
-    steps: List[str] = Field(..., min_length=1, max_length=MAX_INSTRUCTION_STEPS)
+    instructions: List[str] = Field(..., min_length=1, max_length=MAX_INSTRUCTION_STEPS)
     tags: List[str] = Field(default_factory=list)
     difficulty: DifficultyLevel
     cuisine: str = Field(..., min_length=1, max_length=MAX_CUISINE_LENGTH)
 
-    @field_validator("steps", mode="before")
+    @field_validator("instructions", mode="before")
     @classmethod
-    def normalize_steps(cls, v: Any) -> List[str]:
+    def normalize_instructions(cls, v: Any) -> List[str]:
         if isinstance(v, str):
             text = v.strip()
             if not text:
@@ -41,11 +41,11 @@ class _RecipeBody(BaseModel):
             return chunks if chunks else [text]
         if isinstance(v, list):
             return [str(item).strip() for item in v if str(item).strip()]
-        raise ValueError("steps must be a list of strings or a single string")
+        raise ValueError("instructions must be a list of strings or a single string")
 
-    @field_validator("steps")
+    @field_validator("instructions")
     @classmethod
-    def require_steps(cls, v: List[str]) -> List[str]:
+    def require_instructions(cls, v: List[str]) -> List[str]:
         if not v:
             raise ValueError("At least one instruction step is required")
         return v

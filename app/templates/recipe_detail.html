@@ -51,7 +51,7 @@
         <div class="mb-4">
             <h3>Instructions</h3>
             <ol class="list-group list-group-numbered">
-                {% for step in recipe.steps %}
+                {% for step in recipe.instructions %}
                 <li class="list-group-item">{{ step }}</li>
                 {% endfor %}
             </ol>
@@ -83,7 +83,7 @@
                     <div><strong>Created:</strong> {{ recipe.created_at.strftime('%B %d, %Y') }}</div>
                     <div><strong>Updated:</strong> {{ recipe.updated_at.strftime('%B %d, %Y') }}</div>
                     <div><strong>Ingredients:</strong> {{ recipe.ingredients|length }}</div>
-                    <div><strong>Steps:</strong> {{ recipe.steps|length }}</div>
+                    <div><strong>Steps:</strong> {{ recipe.instructions|length }}</div>
                     <div><strong>Cuisine:</strong> {{ recipe.cuisine }}</div>
                     <div><strong>Difficulty:</strong> {{ recipe.difficulty }}</div>
                 </small>

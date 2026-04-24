@@ -66,7 +66,7 @@ def edit_recipe_form(request: Request, recipe_id: str):
     )
 
 
-def _steps_from_form(text: str) -> list[str]:
+def _instruction_lines_from_form(text: str) -> list[str]:
     return [line.strip() for line in text.splitlines() if line.strip()]
 
 
@@ -78,7 +78,7 @@ def create_recipe_form(
     difficulty: str = Form(...),
     cuisine: str = Form(...),
     ingredients: str = Form(...),
-    steps: str = Form(...),
+    instructions: str = Form(...),
     tags: str = Form(...),
 ):
     """Handle new recipe form submission"""
@@ -90,13 +90,13 @@ def create_recipe_form(
         # Parse ingredients (one per line) and tags (comma-separated)
         ingredient_list = [ing.strip() for ing in ingredients.split("\n") if ing.strip()]
         tag_list = [tag.strip() for tag in tags.split(",") if tag.strip()]
-        step_list = _steps_from_form(steps)
+        instruction_list = _instruction_lines_from_form(instructions)
         
         # Validation
         if len(ingredient_list) == 0:
             raise ValueError("At least one ingredient required")
         
-        if not step_list:
+        if not instruction_list:
             raise ValueError("At least one instruction step is required (one step per line)")
         
         recipe_data = RecipeCreate(
@@ -105,7 +105,7 @@ def create_recipe_form(
             difficulty=difficulty,
             cuisine=cuisine.strip(),
             ingredients=ingredient_list,
-            steps=step_list,
+            instructions=instruction_list,
             tags=tag_list,
         )
         
@@ -130,7 +130,7 @@ def update_recipe_form(
     difficulty: str = Form(...),
     cuisine: str = Form(...),
     ingredients: str = Form(...),
-    steps: str = Form(...),
+    instructions: str = Form(...),
     tags: str = Form(...),
 ):
     """Handle edit recipe form submission"""
@@ -142,12 +142,12 @@ def update_recipe_form(
         # Parse ingredients (one per line) and tags (comma-separated)
         ingredient_list = [ing.strip() for ing in ingredients.split("\n") if ing.strip()]
         tag_list = [tag.strip() for tag in tags.split(",") if tag.strip()]
-        step_list = _steps_from_form(steps)
+        instruction_list = _instruction_lines_from_form(instructions)
         
         if len(ingredient_list) == 0:
             raise ValueError("Need ingredients!")
             
-        if not step_list:
+        if not instruction_list:
             raise ValueError("At least one instruction step is required (one step per line)")
         
         recipe_data = RecipeUpdate(
@@ -156,7 +156,7 @@ def update_recipe_form(
             difficulty=difficulty,
             cuisine=cuisine.strip(),
             ingredients=ingredient_list,
-            steps=step_list,
+            instructions=instruction_list,
             tags=tag_list,
         )
         
