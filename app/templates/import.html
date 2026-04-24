@@ -54,7 +54,8 @@
     "title": "Recipe Title",
     "description": "Recipe description",
     "ingredients": ["ingredient 1", "ingredient 2"],
-    "instructions": "First, do step 1.\n\nThen, do step 2.",
+    "steps": ["Do step 1.", "Do step 2."],
+    "cuisine": "Italy",
     "tags": ["tag1", "tag2"],
     "difficulty": "Easy",
     "created_at": "2024-01-01T00:00:00",
@@ -62,7 +63,7 @@
   }
 ]</code></pre>
                 <p class="text-muted">
-                    <small>Note: The <code>id</code>, <code>created_at</code>, and <code>updated_at</code> fields are optional and will be generated automatically if not provided.</small>
+                    <small><code>steps</code> is an ordered list of instruction strings (shown as a numbered list). <code>cuisine</code> describes cuisine or region (required). Legacy files may use a single <code>instructions</code> string (paragraphs separated by blank lines); those are converted on import. The <code>id</code>, <code>created_at</code>, and <code>updated_at</code> fields are optional and will be generated automatically if not provided.</small>
                 </p>
             </div>
         </div>

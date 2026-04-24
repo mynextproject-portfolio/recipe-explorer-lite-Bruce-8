@@ -16,6 +16,7 @@
     <div class="col-md-8">
         <h1>{{ recipe.title }}</h1>
         <p class="lead">{{ recipe.description }}</p>
+        <p class="text-muted"><strong>Cuisine / region:</strong> {{ recipe.cuisine }}</p>
         
         <div class="row mb-4">
             <div class="col-md-6">
@@ -49,11 +50,11 @@
         <!-- Instructions -->
         <div class="mb-4">
             <h3>Instructions</h3>
-            <div class="card">
-                <div class="card-body">
-                    <p class="card-text" style="white-space: pre-line;">{{ recipe.instructions }}</p>
-                </div>
-            </div>
+            <ol class="list-group list-group-numbered">
+                {% for step in recipe.steps %}
+                <li class="list-group-item">{{ step }}</li>
+                {% endfor %}
+            </ol>
         </div>
     </div>
     
@@ -82,6 +83,8 @@
                     <div><strong>Created:</strong> {{ recipe.created_at.strftime('%B %d, %Y') }}</div>
                     <div><strong>Updated:</strong> {{ recipe.updated_at.strftime('%B %d, %Y') }}</div>
                     <div><strong>Ingredients:</strong> {{ recipe.ingredients|length }}</div>
+                    <div><strong>Steps:</strong> {{ recipe.steps|length }}</div>
+                    <div><strong>Cuisine:</strong> {{ recipe.cuisine }}</div>
                     <div><strong>Difficulty:</strong> {{ recipe.difficulty }}</div>
                 </small>
             </div>
