@@ -44,6 +44,7 @@
             <div class="card h-100">
                 <div class="card-body">
                     <h5 class="card-title">{{ recipe.title }}</h5>
+                    <p class="card-text text-muted small mb-1"><strong>Cuisine / region:</strong> {{ recipe.cuisine }}</p>
                     <p class="card-text">{{ recipe.description[:100] }}{% if recipe.description|length > 100 %}...{% endif %}</p>
                     <div class="mb-2">
                         <small class="text-muted">
@@ -59,8 +60,8 @@
                     {% endif %}
                     <div class="mb-2">
                         <small class="text-muted">
-                            {{ recipe.ingredients|length }} ingredients • 
-                            {{ recipe.instructions|length }} steps
+                            {{ recipe.ingredients|length }} ingredients •
+                            {{ recipe.instructions|length }} step{% if recipe.instructions|length != 1 %}s{% endif %}
                         </small>
                     </div>
                 </div>

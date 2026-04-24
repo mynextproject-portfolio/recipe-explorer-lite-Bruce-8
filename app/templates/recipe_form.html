@@ -45,6 +45,13 @@
             </div>
             
             <div class="mb-3">
+                <label for="cuisine" class="form-label">Cuisine or region</label>
+                <input type="text" class="form-control" id="cuisine" name="cuisine" required
+                       value="{% if recipe %}{{ recipe.cuisine }}{% endif %}"
+                       placeholder="e.g. Italy, Oaxaca, Korean American">
+            </div>
+            
+            <div class="mb-3">
                 <label for="tags" class="form-label">Tags (comma-separated)</label>
                 <input type="text" class="form-control" id="tags" name="tags" 
                        value="{% if recipe %}{{ recipe.tags|join(', ') }}{% endif %}"
@@ -82,11 +89,12 @@
                 <textarea name="ingredients" id="ingredients-data" style="display: none;"></textarea>
             </div>
             
-            <!-- Instructions Section -->
+            <!-- Instructions: one numbered step per line -->
             <div class="mb-4">
-                <label for="instructions" class="form-label">Instructions</label>
-                <textarea class="form-control" id="instructions" name="instructions" rows="8" required 
-                          placeholder="Enter complete cooking instructions...">{% if recipe %}{{ recipe.instructions }}{% endif %}</textarea>
+                <label for="instructions" class="form-label">Instruction steps</label>
+                <textarea class="form-control" id="instructions" name="instructions" rows="10" required
+                          placeholder="One step per line. Example:&#10;Preheat the oven to 375°F.&#10;Mix dry ingredients in a bowl.">{% if recipe %}{{ recipe.instructions|join('\n') }}{% endif %}</textarea>
+                <div class="form-text">Each non-empty line becomes one numbered step on the recipe page.</div>
             </div>
             
             <!-- Submit Buttons -->

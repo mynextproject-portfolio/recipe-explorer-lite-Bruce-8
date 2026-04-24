@@ -37,6 +37,8 @@ def test_create_and_get_recipe(client, clean_storage, sample_recipe_data):
     assert "title" in recipe
     assert "created_at" in recipe
     assert recipe["title"] == sample_recipe_data["title"]
+    assert recipe["cuisine"] == sample_recipe_data["cuisine"]
+    assert recipe["instructions"] == sample_recipe_data["instructions"]
     
     # Get recipe
     get_response = client.get(f"/api/recipes/{recipe['id']}")

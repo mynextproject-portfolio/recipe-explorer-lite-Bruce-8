@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Request, Form, HTTPException, Depends
+from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from typing import List, Optional
+from typing import Optional
 from app.models import RecipeCreate, RecipeUpdate
 from app.services.storage import recipe_storage
 
@@ -66,15 +66,20 @@ def edit_recipe_form(request: Request, recipe_id: str):
     )
 
 
+def _instruction_lines_from_form(text: str) -> list[str]:
+    return [line.strip() for line in text.splitlines() if line.strip()]
+
+
 @router.post("/recipes/new")
 def create_recipe_form(
     request: Request,
     title: str = Form(...),
     description: str = Form(...),
     difficulty: str = Form(...),
+    cuisine: str = Form(...),
     ingredients: str = Form(...),
     instructions: str = Form(...),
-    tags: str = Form(...)
+    tags: str = Form(...),
 ):
     """Handle new recipe form submission"""
     try:
@@ -83,23 +88,25 @@ def create_recipe_form(
             raise ValueError("Title too long")
         
         # Parse ingredients (one per line) and tags (comma-separated)
-        ingredient_list = [ing.strip() for ing in ingredients.split('\n') if ing.strip()]
-        tag_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
+        ingredient_list = [ing.strip() for ing in ingredients.split("\n") if ing.strip()]
+        tag_list = [tag.strip() for tag in tags.split(",") if tag.strip()]
+        instruction_list = _instruction_lines_from_form(instructions)
         
         # Validation
         if len(ingredient_list) == 0:
             raise ValueError("At least one ingredient required")
         
-        if not instructions.strip():
-            raise ValueError("Instructions are required")
+        if not instruction_list:
+            raise ValueError("At least one instruction step is required (one step per line)")
         
         recipe_data = RecipeCreate(
             title=title,
             description=description,
             difficulty=difficulty,
+            cuisine=cuisine.strip(),
             ingredients=ingredient_list,
-            instructions=instructions.strip(),
-            tags=tag_list
+            instructions=instruction_list,
+            tags=tag_list,
         )
         
         new_recipe = recipe_storage.create_recipe(recipe_data)
@@ -121,9 +128,10 @@ def update_recipe_form(
     title: str = Form(...),
     description: str = Form(...),
     difficulty: str = Form(...),
+    cuisine: str = Form(...),
     ingredients: str = Form(...),
     instructions: str = Form(...),
-    tags: str = Form(...)
+    tags: str = Form(...),
 ):
     """Handle edit recipe form submission"""
     try:
@@ -132,22 +140,24 @@ def update_recipe_form(
             raise ValueError("Title is too long!")
         
         # Parse ingredients (one per line) and tags (comma-separated)
-        ingredient_list = [ing.strip() for ing in ingredients.split('\n') if ing.strip()]
-        tag_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
+        ingredient_list = [ing.strip() for ing in ingredients.split("\n") if ing.strip()]
+        tag_list = [tag.strip() for tag in tags.split(",") if tag.strip()]
+        instruction_list = _instruction_lines_from_form(instructions)
         
         if len(ingredient_list) == 0:
             raise ValueError("Need ingredients!")
             
-        if not instructions.strip():
-            raise ValueError("Instructions are required")
+        if not instruction_list:
+            raise ValueError("At least one instruction step is required (one step per line)")
         
         recipe_data = RecipeUpdate(
             title=title,
             description=description,
             difficulty=difficulty,
+            cuisine=cuisine.strip(),
             ingredients=ingredient_list,
-            instructions=instructions.strip(),
-            tags=tag_list
+            instructions=instruction_list,
+            tags=tag_list,
         )
         
         updated_recipe = recipe_storage.update_recipe(recipe_id, recipe_data)

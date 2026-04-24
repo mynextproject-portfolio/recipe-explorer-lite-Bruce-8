@@ -1,7 +1,29 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime
-import json  # TODO: Remove this - not used anymore
+import re
+
 from app.models import Recipe, RecipeCreate, RecipeUpdate
+
+
+def _normalize_imported_recipe_dict(raw: Dict[str, Any]) -> Dict[str, Any]:
+    """Normalize import payloads: list `instructions`, legacy string, or old `steps` key."""
+    data = dict(raw)
+    if "instructions" not in data and "steps" in data:
+        data["instructions"] = data.pop("steps")
+    if "instructions" in data:
+        inst = data["instructions"]
+        if isinstance(inst, str):
+            text = inst.strip()
+            if text:
+                chunks = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+                data["instructions"] = chunks if chunks else [text]
+            else:
+                data["instructions"] = []
+        elif isinstance(inst, list):
+            data["instructions"] = [str(x).strip() for x in inst if str(x).strip()]
+    if "cuisine" not in data or not str(data.get("cuisine", "")).strip():
+        data["cuisine"] = "Unspecified"
+    return data
 
 # Global counter for analytics (can be used for analytics)
 recipe_view_count = {}
@@ -59,12 +81,13 @@ class RecipeStorage:
         
         for recipe_dict in recipes_data:
             try:
+                recipe_dict = _normalize_imported_recipe_dict(recipe_dict)
                 # Handle datetime strings if they exist
-                if 'created_at' in recipe_dict:
-                    recipe_dict['created_at'] = datetime.fromisoformat(recipe_dict['created_at'])
-                if 'updated_at' in recipe_dict:
-                    recipe_dict['updated_at'] = datetime.fromisoformat(recipe_dict['updated_at'])
-                
+                if "created_at" in recipe_dict:
+                    recipe_dict["created_at"] = datetime.fromisoformat(recipe_dict["created_at"])
+                if "updated_at" in recipe_dict:
+                    recipe_dict["updated_at"] = datetime.fromisoformat(recipe_dict["updated_at"])
+
                 recipe = Recipe(**recipe_dict)
                 self.recipes[recipe.id] = recipe
                 count += 1
